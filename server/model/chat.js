@@ -11,6 +11,10 @@ const Chat = sequelize.define('chat',{
     message:{
         type:Sequilize.STRING,
         allowNull:false
+    },
+    name:{
+        type:Sequilize.STRING,
+        allowNull:false
     }
 })
 

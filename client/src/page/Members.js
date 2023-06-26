@@ -8,7 +8,7 @@ import avatar4 from '../Assets/avatar4.jpg';
 const Members = () => {
   return (
     // <div className='row'>
-        <div className="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0 p-2 m-2">
+        <div className="col-md-4 col-lg-5 col-xl-4 mb-4 mb-md-0 p-2 m-2">
 
 <h5 className="font-weight-bold mb-3 text-center text-lg-start">Member</h5>
 
