@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import avatar1 from '../Assets/avatar1.jpg';
 import avatar2 from '../Assets/avatar2.jpg';
 import avatar3 from '../Assets/avatar3.jpg';
 import avatar4 from '../Assets/avatar4.jpg';
+import axios from 'axios';
+import api from '../helper/api';
 
 const Chat = () => {
+    const [chat , setChat] = useState('')
+
+    const changeHandler =(e)=>{
+        e.preventDefault();
+        setChat(e.target.value)
+    }
+    
+    const sendChatHandler=async(e)=>{
+        try{
+let responce = await axios.post(`${api}/chat/send` , {chat} ,{ headers: {"Authorization" : localStorage.getItem('token')} })
+          console.log(responce)
+        }catch(err){
+
+        }
+    }
   return (
     // <div className="row">
     
@@ -61,11 +78,11 @@ const Chat = () => {
           </li>
           <li className="bg-white mb-3">
             <div className="form-outline">
-              <textarea className="form-control" id="textAreaExample2" rows="4"></textarea>
+              <textarea className="form-control" id="textAreaExample2" rows="4" onChange={changeHandler}></textarea>
               <label className="form-label" for="textAreaExample2">Type Your Message....</label>
             </div>
           </li>
-          <button type="button" className="btn btn-info btn-rounded float-end">Send</button>
+          <button type="button" className="btn btn-info btn-rounded float-end" onClick={sendChatHandler}>Send</button>
         </ul>
 
       </div>
