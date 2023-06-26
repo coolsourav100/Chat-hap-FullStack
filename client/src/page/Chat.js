@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import avatar1 from '../Assets/avatar1.jpg';
-import avatar2 from '../Assets/avatar2.jpg';
-import avatar3 from '../Assets/avatar3.jpg';
-import avatar4 from '../Assets/avatar4.jpg';
+import Avatar, { genConfig } from 'react-nice-avatar'
 import axios from 'axios';
 import api from '../helper/api';
 
@@ -49,19 +46,21 @@ let responce = await axios.post(`${api}/chat/send` , {chat} ,{ headers: {"Author
       <div className="overflow-auto col-md-6 col-lg-7 col-xl-8 p-2 m-2" style={{height:'500px',width:'800px'}}>
       <ul className=" list-unstyled">
       {message?.map((item,index)=>{
+        let config = genConfig(item.name)
           return (<li className="d-flex justify-content-between mb-4" key={index+1}>
-            <img src={avatar4} alt="avatar"
-              className="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60"/>
+          <diV className='d-flex flex-column'>
+          <Avatar style={{ width: '4rem', height: '4rem' }} {...config} /><span className='text-primary p-2'>{item.name}</span>
+          </diV>
+
             <div className="card">
-              <div className="card-header d-flex justify-content-around p-4 m-2" style={{width:'15rem'}}>
-                <p className="fw-bold mb-0"> {item.name}</p>
-                <span className="text-muted small mb-0"><i class="bi bi-clock"></i>  {getMin(item.updatedAt)}  Mins</span>
+              
+                 <div className="card-body d-flex justify-content-around">
+                <p className="display-8 mb-0 text-bold text-dark p-2">
+                {item.message}
+                
+                <span className="text-muted small mb-0 p-2"><i class="bi bi-clock"></i>  {getMin(item.updatedAt)}  Mins</span></p>
               </div>
-              <div className="card-body ">
-                <p className="display -4 mb-0 text-bold">
-                  {item.message}
-                </p>
-              </div>
+              <span className="text-info p-1">{item.name}</span>
             </div>
           </li>)})}
          
@@ -69,13 +68,12 @@ let responce = await axios.post(`${api}/chat/send` , {chat} ,{ headers: {"Author
         </ul>
 
       </div>
-      <li className="bg-white mb-3">
-      <div className="form-outline">
-        <textarea className="form-control" id="textAreaExample2" rows="4" onChange={changeHandler}></textarea>
-        <label className="form-label" for="textAreaExample2">Type Your Message....</label>
+      <li className="opacity-100 bg-transparent mb-3">
+      <div className="form-group purple-border">
+        <textarea className="bg-transparent form form-control " id="textAreaExample2" rows="4" placeholder='Type Your Message....' onChange={changeHandler}></textarea>
       </div>
     </li>
-    <button type="button" className="btn btn-info btn-rounded float-end" onClick={sendChatHandler}>Send</button>
+    <button type="button" className="btn btn-info btn-rounded float-end mx-4 px-4" onClick={sendChatHandler}>Send</button>
     </div>
     
   )
