@@ -74,7 +74,7 @@ setUserDetails({...userDetails,[e.target.name]:e.target.value})
     <div className="container h-100">
     <div className="row d-flex align-items-center justify-content-center h-100">
     <div className="col-md-8 col-lg-7 col-xl-6">
-    <div className='d-flex align-items-center justify-content-center flex-column h-50'><img  src={logo}/></div>
+    <div className='d-flex align-items-center justify-content-center flex-column h-50 p-4 m-4'><img  src={logo}/></div>
         {!toggle && <img src={login}
           className="img-fluid" alt="Phone image"/>}
          { toggle && <img src={sign}

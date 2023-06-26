@@ -28,14 +28,15 @@ exports.registerController = async(req,res,next)=>{
     res.status(500).json(err)
     }}
 
-
+    
     exports.loginController=async(req,res,next)=>{
+        
         let email = req.body.email
         let password = req.body.password
         try{
             const result =  await User.findAll({where:{email:email}})
             if(result.length>0){
-               let jwttokon = jwt.sign({email:email, id:result[0].id},process.env.JWT_KEY)
+               let jwttokon = jwt.sign({email:email},process.env.JWT_KEY)
             let comparePassword = result[0].password
             bcrypt.compare(password , comparePassword, async(err,hashResult)=>{
                 if(!err){
