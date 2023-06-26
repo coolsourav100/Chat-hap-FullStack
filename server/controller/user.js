@@ -42,13 +42,13 @@ exports.registerController = async(req,res,next)=>{
                 if(hashResult==true){
                     res.status(200).json({message:'User Logged in successfully !!' , token:jwttokon})
                 }else{
-                    res.status(400).json('Password did not Match')
+                    res.status(401).json('User not Authorized')
                 }}else{
                     console.log(err)
                 }
             })
         }else{
-            res.status(400).json('Userid did not Match')
+            res.status(404).json('User not Found')
         }
 
         }catch(err){

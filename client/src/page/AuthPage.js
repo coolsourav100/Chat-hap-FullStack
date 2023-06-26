@@ -29,6 +29,7 @@ setUserDetails({...userDetails,[e.target.name]:e.target.value})
           toast.success(responec.data,{theme:'colored'},{
             position:toast.POSITION.TOP_RIGHT
           })
+          setToggle(!toggle)
         }
       }catch(err){
         console.log(err)
