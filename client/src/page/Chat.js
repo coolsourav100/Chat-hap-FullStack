@@ -17,7 +17,7 @@ const Chat = () => {
       })}
       return ()=> clearInterval(interval)
       
-    },30000)},[])
+    },3000)},[chat])
 
     const getMin=(time)=>{
       let min1 = new Date().getTime()
@@ -39,6 +39,7 @@ let responce = await axios.post(`${api}/chat/send` , {chat} ,{ headers: {"Author
         }catch(err){
 
         }
+        setChat('')
     }
   return (
     <div >
@@ -70,7 +71,7 @@ let responce = await axios.post(`${api}/chat/send` , {chat} ,{ headers: {"Author
       </div>
       <li className="opacity-100 bg-transparent mb-3">
       <div className="form-group purple-border">
-        <textarea className="bg-transparent form form-control " id="textAreaExample2" rows="4" placeholder='Type Your Message....' onChange={changeHandler}></textarea>
+        <textarea className="bg-transparent form form-control " id="textAreaExample2" rows="4" placeholder='Type Your Message....' onChange={changeHandler} value={chat}></textarea>
       </div>
     </li>
     <button type="button" className="btn btn-info btn-rounded float-end mx-4 px-4" onClick={sendChatHandler}>Send</button>
