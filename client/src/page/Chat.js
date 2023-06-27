@@ -5,27 +5,37 @@ import api from '../helper/api';
 
 const Chat = () => {
     const [chat , setChat] = useState('');
-    const [message , setMessage] = useState([])
+    const [toggle , setToggle] = useState(false)
+    const [ message , setMessage] = useState(JSON.parse(localStorage.getItem('mdata')))
     
 
     useEffect(()=>{
-      let interval = setInterval(async()=>{
-        if(localStorage.getItem('token')){
-     await axios.get(`${api}/chat/allmassages` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
-        console.log(res , new Date().getMinutes())
-        setMessage(res.data)
-      })}
-      return ()=> clearInterval(interval)
-      
-    },3000)},[chat])
+    axios.get(`${api}/chat/allmassages?lastmessage=${localStorage.getItem('mid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
+      if(res.data.length){
+        localStorage.setItem('mid' ,res.data[res.data.length-1].id)
+        if(localStorage.getItem('mdata') !==null){
+          let oldmData = localStorage.getItem('mdata')
+          let oldmData1 = JSON.parse(oldmData)
+          let arr =[...oldmData1 , ...res.data]
+          let arr1 = arr.slice(-10)
+          localStorage.setItem('mdata',JSON.stringify(arr1))
+          setMessage(JSON.parse(localStorage.getItem('mdata')))
+        }else{
+          localStorage.setItem('mdata',JSON.stringify(res.data))
+          setMessage(JSON.parse(localStorage.getItem('mdata')))
+        }
+      }
+    })
+    },[toggle])
 
+// console.log(lastmessageid,'yyyyyy')
     const getMin=(time)=>{
       let min1 = new Date().getTime()
       let min2 = new Date(time).getTime()
        return Math.floor((min1 - min2)/60000)
       
     }
-    // getMin()
+   
 
     const changeHandler =(e)=>{
         e.preventDefault();
@@ -35,6 +45,9 @@ const Chat = () => {
     const sendChatHandler=async(e)=>{
         try{
 let responce = await axios.post(`${api}/chat/send` , {chat} ,{ headers: {"Authorization" : localStorage.getItem('token')} })
+setToggle(setTimeout(()=>{
+  return !toggle
+},1000))
           console.log(responce)
         }catch(err){
 
