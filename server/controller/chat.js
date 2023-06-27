@@ -3,7 +3,7 @@ const User = require('../model/user')
 const { Op } = require("sequelize");
 
 exports.sendController = async(req,res,next)=>{
-    let uemail = req.useremail
+    let uemail = req.user.email
     console.log(req.body)
     try{
         let userData = await User.findAll({where:{email:uemail}})
@@ -20,7 +20,7 @@ exports.sendController = async(req,res,next)=>{
 
 exports.allmassages = async(req,res , next)=>{
     console.log(req.query)
-    let useremail = req.useremail 
+    let useremail = req.user.email 
     let lastmessage =req.query.lastmessage
     try{
         if(useremail){

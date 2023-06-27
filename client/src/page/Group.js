@@ -5,41 +5,28 @@ import api from '../helper/api';
 import { Link } from 'react-router-dom';
 
 
-const Members = () => {
-const [ allmember , setAllmember] = useState([])
+const Group = () => {
+const [ allgroup , setAllgroup] = useState([])
 
   useEffect(()=>{
-    axios.get(`${api}/auth/allmember`,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res=>{
-      setAllmember(res.data)
+    axios.get(`${api}/group/groupdata`,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res=>{
+      setAllgroup(res.data)
     }))
   },[])
 
   let config1 =genConfig(`joh**%`)
   return (
-    // <div className='row'>
+
         <div className=" col-md-4 col-lg-5 col-xl-4 mb-4 mb-md-0 p-2 m-2" style={{height:'500px',width:'400px'}}>
 
-<h5 className="font-weight-bold mb-3 text-center text-lg-start">Member</h5>
+<h5 className="font-weight-bold mb-3 text-center text-lg-start">Group</h5>
 <div className='overflow-auto' style={{height:'500px'}}>
-<div className="card">
+{allgroup.length ? <div className="card">
   <div className="card-body">
 
     <ul className="list-unstyled mb-0">
 
-    <li className="p-2 border-bottom" style={{backgroundColor: "#eee"}}>
-        <Link to='/group' className="d-flex justify-content-between text-decoration-none">
-          <div className="d-flex flex-row">
-          <div className='d-flex flex-column'>
-          <Avatar style={{ width: '4rem', height: '4rem' }} {...config1} />
-          </div>
-            <div className="pt-1">
-              <p className="fw-bold mb-0 p-2 mt-2 text-dark">Create A Group</p>
-            </div>
-          </div>
-        </Link>
-      </li>
-
-      { allmember?.map((item, ind)=>{
+      { allgroup?.map((item, ind)=>{
         let config = genConfig(item.name)
         return (
       <li className="p-2 border-bottom" style={{backgroundColor: "#eee"}} key={ind+1}>
@@ -63,12 +50,12 @@ const [ allmember , setAllmember] = useState([])
     </ul>
 
   </div>
-</div>
+</div> : <h3>Create Your Group</h3>}
 </div>
 
 </div>
-    // </div>
+   
   )
 }
 
-export default Members
+export default Group

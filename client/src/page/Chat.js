@@ -62,9 +62,9 @@ setToggle(setTimeout(()=>{
       {message?.map((item,index)=>{
         let config = genConfig(item.name)
           return (<li className="d-flex justify-content-between mb-4" key={index+1}>
-          <diV className='d-flex flex-column'>
+          <div className='d-flex flex-column'>
           <Avatar style={{ width: '4rem', height: '4rem' }} {...config} /><span className='text-primary p-2'>{item.name}</span>
-          </diV>
+          </div>
 
             <div className="card">
               

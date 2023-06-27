@@ -4,6 +4,7 @@ import Chat from './Chat'
 import Logout from '../helper/Logout';
 import logo from '../Assets/logo.png';
 import './Home.module.css'
+import Group from './Group';
 
 const Home = () => {
   return (
@@ -15,9 +16,8 @@ const Home = () => {
         <section className='container mw-100 border  rounded' style={{backgroundColor: "#eee"}}>
   <div className="container d-flex">
 <Members/>
-
-
 <Chat/>
+<Group/>
   </div>
 </section>
     </div>

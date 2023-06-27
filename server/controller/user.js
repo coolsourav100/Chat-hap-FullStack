@@ -56,3 +56,13 @@ exports.registerController = async(req,res,next)=>{
 
         }
     }
+
+    exports.allmemberController = async(req,res,next)=>{
+        let useremail = req.useremail 
+        try{
+             let result =  await User.findAll({attributes: ['name', 'id']})
+               res.status(200).json(result)
+        }catch(err){
+            res.status(500).json(err)
+        }
+    }
