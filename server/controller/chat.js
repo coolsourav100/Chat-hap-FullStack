@@ -4,7 +4,7 @@ const User = require('../model/user')
 const { Op } = require("sequelize");
 
 exports.sendController = async(req,res,next)=>{
-    let groupId = req.params
+    let sender = req.params.sender
     let userid = req.user.id
     
     try{
@@ -26,7 +26,9 @@ exports.sendController = async(req,res,next)=>{
 
 exports.allmassages = async(req,res , next)=>{
     let userid = req.user.id 
-    let lastmessage =req.query.lastmessage
+    let lastmessage =req.params.lastsms
+    let sender = req.params.sender
+    console.log(res.params)
     try{
         if(userid){
             // let result =await Chat.findAll({where:{ id:{[Op.gt]:+lastmessage}}})
@@ -75,11 +77,11 @@ exports.getGroupMessage = async(req,res,next)=>{
         let groupsms = await Chat.findAll({
             
             where: {
-                [Op.and]: [
-                  { chatgroupId: groupid },
-                  { userId: userid },
+                
+                  chatgroupId: groupid
+                
                   
-                ]
+                
               }
         })
         res.status(200).json({data:groupsms,gid:groupid})

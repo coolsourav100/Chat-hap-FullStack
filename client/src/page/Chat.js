@@ -10,10 +10,10 @@ const Chat = ({userDataa}) => {
     
 
     useEffect(()=>{
-    axios.get(`${api}/chat/allmassages?lastmessage=${localStorage.getItem('mid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
+    axios.get(`${api}/chat/allmassages/${localStorage.getItem('mid') || 0}/${userDataa?.id || 1}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
       if(res.data.data.length){
-        console.log(userDataa,'===============')
-        if(res.data.gid != userDataa?.id){
+        console.log(userDataa,res.data,'===============')
+        if(res.data.uid != userDataa?.id){
           localStorage.removeItem('mdata')}
         localStorage.setItem('mid' ,res.data.data[res.data.data.length-1].id)
         if(localStorage.getItem('mdata') !==null){
@@ -29,7 +29,7 @@ const Chat = ({userDataa}) => {
         }
       }
     })
-    },[userDataa?.id])
+    },[userDataa?.id,toggle])
 
 // console.log(lastmessageid,'yyyyyy')
     const getMin=(time)=>{
@@ -47,7 +47,7 @@ const Chat = ({userDataa}) => {
     
     const sendChatHandler=async(e)=>{
         try{
-let responce = await axios.post(`${api}/chat/send` , {chat} ,{ headers: {"Authorization" : localStorage.getItem('token')} })
+let responce = await axios.post(`${api}/chat/send/${userDataa.id || 1}` , {chat} ,{ headers: {"Authorization" : localStorage.getItem('token')} })
 setToggle(setTimeout(()=>{
   return !toggle
 },1000))
