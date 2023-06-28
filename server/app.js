@@ -7,17 +7,19 @@ const groupRouter = require('./routes/group')
 const cors = require('cors');
 const User = require('./model/user');
 const Chat = require('./model/chat');
-const UserGroup = require('./model/userGroup');
 const Group = require('./model/group');
+const GroupUser = require('./model/groupuser')
 const app = express()
 
 app.use(bodyParser.json())
 app.use(cors({origin:'http://localhost:3000'}))
 
 User.hasMany(Chat);
+Group.hasMany(Chat)
+Chat.belongsTo(Group)
 Chat.belongsTo(User)
-User.hasMany(UserGroup)
-Group.hasMany(UserGroup)
+User.belongsToMany(Group,{ through: GroupUser})
+Group.belongsToMany(User,{through: GroupUser})
 
 app.use('/auth',userRouter)
 app.use('/chat',chatRouter)

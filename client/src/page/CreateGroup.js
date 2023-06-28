@@ -1,31 +1,38 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import group from '../Assets/group.jpg'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+
 import api from '../helper/api'
 
 const CreateGroup = () => {
     const [name , setName] = useState('')
+    const [allmember , setAllmember] = useState([])
     const [ member , setMember] = useState([])
     const navigate = useNavigate()
+    
+    useEffect(()=>{
+      axios.get(`${api}/auth/allmember`,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
+        console.log(res)
+        setAllmember(res.data)
+      }).catch(err=>console.log(err))
+    },[])
     
     const nameHandler=(e)=>{
             setName(e.target.value)
     }
     const memberHandler=(e)=>{
-        let arr =e.target.value
-        let narr =arr.split(',')
-        setMember(narr)
+      setMember((prev)=> [...prev,e.target.value])
     }
 
     const submitHandler=(e)=>{
         e.preventDefault()
-        axios.post(`${api}/group/create`,{name:name},{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res=>{
+        axios.post(`${api}/group/create`,{name:name , groupmember:member},{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res=>{
             console.log(res,'group')
         })).catch(err=>console.log(err))
         navigate('/dashboard')
     }
-    console.log(member , name)
+    console.log(member)
   return (
     <div>
          <div>
@@ -48,7 +55,18 @@ const CreateGroup = () => {
             <label className="form-label" for="form1Example13" >Name of Your Group</label>
           </div>
           <div className="form-outline mb-4">
-            <input type="text" name="" className="form-control form-control-lg" required placeholder='Enter Their UserId like 1 , 2 , 3' onChange={memberHandler}/>
+            
+           
+              {allmember.map((item)=>{
+                return (
+                  <>
+                  <label>{item.name}</label>
+                  <input type='checkbox'  value={item.id} onClick={memberHandler}/>
+                  </>
+                )
+              })}
+              
+              
             <label className="form-label" for="form1Example13">Add Member</label>
           </div>
           

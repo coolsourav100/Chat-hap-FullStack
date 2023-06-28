@@ -46,6 +46,7 @@ setUserDetails({...userDetails,[e.target.name]:e.target.value})
             position:toast.POSITION.TOP_RIGHT
           })
           localStorage.setItem('token',responec.data.token)
+          localStorage.setItem('username',responec.data.username)
           navigate('/dashboard')
         }
 

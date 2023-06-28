@@ -36,12 +36,12 @@ exports.registerController = async(req,res,next)=>{
         try{
             const result =  await User.findAll({where:{email:email}})
             if(result.length>0){
-               let jwttokon = jwt.sign({email:email},process.env.JWT_KEY)
+               let jwttokon = jwt.sign({id:result[0].id},process.env.JWT_KEY)
             let comparePassword = result[0].password
             bcrypt.compare(password , comparePassword, async(err,hashResult)=>{
                 if(!err){
                 if(hashResult==true){
-                    res.status(200).json({message:'User Logged in successfully !!' , token:jwttokon})
+                    res.status(200).json({message:'User Logged in successfully !!' , token:jwttokon ,username:result[0].name})
                 }else{
                     res.status(401).json('User not Authorized')
                 }}else{
@@ -58,7 +58,7 @@ exports.registerController = async(req,res,next)=>{
     }
 
     exports.allmemberController = async(req,res,next)=>{
-        let useremail = req.useremail 
+        let useremail = req.user.email 
         try{
              let result =  await User.findAll({attributes: ['name', 'id']})
                res.status(200).json(result)

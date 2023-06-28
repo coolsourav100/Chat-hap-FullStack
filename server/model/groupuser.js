@@ -1,8 +1,7 @@
-
 const Sequilize = require('sequelize') 
 const sequelize = require('../util/dataBase')
 
-const UserGroup = sequelize.define('group',{
+const GroupUser = sequelize.define('groupuser',{
     id:{
         type:Sequilize.INTEGER,
         allowNull: false,
@@ -10,13 +9,14 @@ const UserGroup = sequelize.define('group',{
         primaryKey: true
     },
     userId:{
-        type:Sequilize.INTEGER,
+        type:Sequilize.STRING,
         allowNull:false
     },
     groupId:{
-        type:Sequilize.INTEGER,
+        type:Sequilize.STRING,
         allowNull:false
-    }
+    },
+    
 })
 
-module.exports = UserGroup
+module.exports = GroupUser

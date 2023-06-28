@@ -3,26 +3,27 @@ import Avatar, { genConfig } from 'react-nice-avatar'
 import axios from 'axios';
 import api from '../helper/api';
 
-const Chat = () => {
+const GroupChat = ({groupData}) => {
     const [chat , setChat] = useState('');
     const [toggle , setToggle] = useState(false)
     const [ message , setMessage] = useState(JSON.parse(localStorage.getItem('mdata')))
     
+    
 
     useEffect(()=>{
-    axios.get(`${api}/chat/allmassages?lastmessage=${localStorage.getItem('mid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
+    axios.get(`${api}/chat/getgroupmessage/${groupData.id}/${localStorage.getItem('gmid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
       if(res.data.length){
-        localStorage.setItem('mid' ,res.data[res.data.length-1].id)
-        if(localStorage.getItem('mdata') !==null){
-          let oldmData = localStorage.getItem('mdata')
+        localStorage.setItem('gmid' ,res.data[res.data.length-1].id)
+        if(localStorage.getItem('gmdata') !==null){
+          let oldmData = localStorage.getItem('gmdata')
           let oldmData1 = JSON.parse(oldmData)
           let arr =[...oldmData1 , ...res.data]
           let arr1 = arr.slice(-10)
-          localStorage.setItem('mdata',JSON.stringify(arr1))
-          setMessage(JSON.parse(localStorage.getItem('mdata')))
+          localStorage.setItem('gmdata',JSON.stringify(arr1))
+          setMessage(JSON.parse(localStorage.getItem('gmdata')))
         }else{
-          localStorage.setItem('mdata',JSON.stringify(res.data))
-          setMessage(JSON.parse(localStorage.getItem('mdata')))
+          localStorage.setItem('gmdata',JSON.stringify(res.data))
+          setMessage(JSON.parse(localStorage.getItem('gmdata')))
         }
       }
     })
@@ -44,7 +45,7 @@ const Chat = () => {
     
     const sendChatHandler=async(e)=>{
         try{
-let responce = await axios.post(`${api}/chat/send` , {chat} ,{ headers: {"Authorization" : localStorage.getItem('token')} })
+let responce = await axios.post(`${api}/chat/sendgroupmessage/${groupData.id}/${groupData.name}`,{chat} ,{ headers: {"Authorization" : localStorage.getItem('token')} })
 setToggle(setTimeout(()=>{
   return !toggle
 },1000))
@@ -54,14 +55,14 @@ setToggle(setTimeout(()=>{
         }
         setChat('')
     }
-    console.log('NormalChat')
+    console.log('GroupChat')
   return (
     <div >
-    <h3 className="font-weight-bold mb-3 text-center text-secondary text-lg-start">Normal Chat</h3>
+        <h3 className="font-weight-bold mb-3 text-center text-secondary text-lg-start">Group Name : {groupData?.name}</h3>
       <div className="overflow-auto col-md-6 col-lg-7 col-xl-8 p-2 m-2" style={{height:'500px',width:'800px'}}>
       <ul className=" list-unstyled">
       {message?.map((item,index)=>{
-        let config = genConfig(item.name)
+        let config = genConfig(item.id)
           return (<li className="d-flex justify-content-between mb-4" key={index+1}>
           <div className='d-flex flex-column'>
           <Avatar style={{ width: '4rem', height: '4rem' }} {...config} /><span className='text-primary p-2'>{item.name}</span>
@@ -94,4 +95,4 @@ setToggle(setTimeout(()=>{
   )
 }
 
-export default Chat
+export default GroupChat

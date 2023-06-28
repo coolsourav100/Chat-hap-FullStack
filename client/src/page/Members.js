@@ -5,7 +5,7 @@ import api from '../helper/api';
 import { Link } from 'react-router-dom';
 
 
-const Members = () => {
+const Members = (props) => {
 const [ allmember , setAllmember] = useState([])
 
   useEffect(()=>{
@@ -15,6 +15,12 @@ const [ allmember , setAllmember] = useState([])
   },[])
 
   let config1 =genConfig(`joh**%`)
+
+  const chatClickHandler=(e)=>{
+    e.preventDefault();
+    props.onGroupId('member')
+    // console.log('Members')
+  }
   return (
     // <div className='row'>
         <div className=" col-md-4 col-lg-5 col-xl-4 mb-4 mb-md-0 p-2 m-2" style={{height:'500px',width:'400px'}}>
@@ -26,24 +32,13 @@ const [ allmember , setAllmember] = useState([])
 
     <ul className="list-unstyled mb-0">
 
-    <li className="p-2 border-bottom" style={{backgroundColor: "#eee"}}>
-        <Link to='/group' className="d-flex justify-content-between text-decoration-none">
-          <div className="d-flex flex-row">
-          <div className='d-flex flex-column'>
-          <Avatar style={{ width: '4rem', height: '4rem' }} {...config1} />
-          </div>
-            <div className="pt-1">
-              <p className="fw-bold mb-0 p-2 mt-2 text-dark">Create A Group</p>
-            </div>
-          </div>
-        </Link>
-      </li>
+    
 
       { allmember?.map((item, ind)=>{
         let config = genConfig(item.name)
         return (
       <li className="p-2 border-bottom" style={{backgroundColor: "#eee"}} key={ind+1}>
-        <a href="" className="d-flex justify-content-between text-decoration-none">
+        <a href="" className="d-flex justify-content-between text-decoration-none" onClick={chatClickHandler}>
           <div className="d-flex flex-row">
           <div className='d-flex flex-column'>
           <Avatar style={{ width: '4rem', height: '4rem' }} {...config} />

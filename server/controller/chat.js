@@ -3,11 +3,14 @@ const User = require('../model/user')
 const { Op } = require("sequelize");
 
 exports.sendController = async(req,res,next)=>{
-    let uemail = req.user.email
-    console.log(req.body)
+    let groupId = req.params
+    let userid = req.user.id
+    
     try{
-        let userData = await User.findAll({where:{email:uemail}})
-        await Chat.create({message:req.body.chat , userId:userData[0].id ,name:userData[0].name}).then(result=>{
+        let userData = await User.findAll({where:{id:userid}})
+        await Chat.create({
+            message:req.body.chat ,
+             userId:userid,name:userData[0].name}).then(result=>{
             res.status(200).json('send')
         }).catch(err=>{
             throw new Error(err)
@@ -19,18 +22,50 @@ exports.sendController = async(req,res,next)=>{
 }
 
 exports.allmassages = async(req,res , next)=>{
-    console.log(req.query)
-    let useremail = req.user.email 
+    let userid = req.user.id 
     let lastmessage =req.query.lastmessage
     try{
-        if(useremail){
-            console.log(lastmessage,'hello')
-        let result =await Chat.findAll({where:{ id:{[Op.gt]:+lastmessage}}})
-            // console.log(result,'=======================>')
-        res.status(200).send(result)
+        if(userid){
+            let result =await Chat.findAll({where:{ id:{[Op.gt]:+lastmessage}}})
+            res.status(200).send(result)
         }else{
             res.status(400).json('Unauthorized Access')
         }
+    }catch(err){
+        res.status(500).json(err)
+    }
+}
+
+exports.sendGroupMessage = async(req,res,next)=>{
+    // console.log(req.params,'paramas')
+    let userid = req.user.id 
+    let groupid = req.params.id
+    let groupName = req.params.name
+    try{
+        await Chat.create({
+            message : req.body.chat,
+            name:groupName,
+            userId:userid,
+            groupId :groupid
+        })
+        return res.status(200).json('message created')
+    }catch(err){
+        return res.status(500).json(err)
+    }
+}
+
+exports.getGroupMessage = async(req,res,next)=>{
+    let groupid = req.params.id
+    let lastmessage =req.params.lastsms
+    try{
+        let groupsms = await Chat.findAll({
+            where:{
+                groupId:groupid
+            },where:{
+                id:{[Op.gt]:+lastmessage}
+            }
+        })
+        res.status(200).json(groupsms)
     }catch(err){
         res.status(500).json(err)
     }
