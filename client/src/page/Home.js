@@ -10,13 +10,21 @@ import Group from './Group';
 const Home = () => {
   const [ groupId , setGroupId] = useState('member')
   const [groupDetails , setGroupDetails] = useState()
+  const [ userDetails , setUserDetails] = useState()
+  const [toggle , setToggle] = useState(false)
 function onGroupId(id){
   console.log('iD',id)
   setGroupId(id)
 }
 function groupData(data){
 setGroupDetails(data)
+// setToggle(!toggle)
 }
+function userData(data){
+  setUserDetails(data)
+  // setToggle(!toggle)
+}
+console.log(userDetails,'userData+++++++++++++++')
   return (
     <div className='m-2 mh-50'>
         <div className='d-flex justify-content-between'>
@@ -25,8 +33,8 @@ setGroupDetails(data)
             </div>
         <section className='container mw-100 border  rounded' style={{backgroundColor: "#eee"}}>
   <div className="container d-flex">
-<Members onGroupId={onGroupId}/>
-{groupId==='member' && <Chat />}
+<Members onGroupId={onGroupId}  userData={userData}/>
+{groupId==='member' && <Chat userDataa={userDetails}/>}
 {groupId==='group' && <GroupChat groupData={groupDetails}/>}
 <Group onGroupId={onGroupId} groupData={groupData}/>
   </div>

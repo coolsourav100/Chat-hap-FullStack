@@ -16,10 +16,10 @@ const [ allmember , setAllmember] = useState([])
 
   let config1 =genConfig(`joh**%`)
 
-  const chatClickHandler=(e)=>{
-    e.preventDefault();
+  const chatClickHandler=(data)=>{
+    
     props.onGroupId('member')
-    // console.log('Members')
+    props.userData(data)
   }
   return (
     // <div className='row'>
@@ -38,7 +38,7 @@ const [ allmember , setAllmember] = useState([])
         let config = genConfig(item.name)
         return (
       <li className="p-2 border-bottom" style={{backgroundColor: "#eee"}} key={ind+1}>
-        <a href="" className="d-flex justify-content-between text-decoration-none" onClick={chatClickHandler}>
+        <a  className="d-flex justify-content-between text-decoration-none" onClick={()=>chatClickHandler(item)}>
           <div className="d-flex flex-row">
           <div className='d-flex flex-column'>
           <Avatar style={{ width: '4rem', height: '4rem' }} {...config} />

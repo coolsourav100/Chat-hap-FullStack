@@ -3,7 +3,7 @@ import Avatar, { genConfig } from 'react-nice-avatar'
 import axios from 'axios';
 import api from '../helper/api';
 
-const Chat = () => {
+const Chat = ({userDataa}) => {
     const [chat , setChat] = useState('');
     const [toggle , setToggle] = useState(false)
     const [ message , setMessage] = useState(JSON.parse(localStorage.getItem('mdata')))
@@ -11,22 +11,25 @@ const Chat = () => {
 
     useEffect(()=>{
     axios.get(`${api}/chat/allmassages?lastmessage=${localStorage.getItem('mid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
-      if(res.data.length){
-        localStorage.setItem('mid' ,res.data[res.data.length-1].id)
+      if(res.data.data.length){
+        console.log(userDataa,'===============')
+        if(res.data.gid != userDataa?.id){
+          localStorage.removeItem('mdata')}
+        localStorage.setItem('mid' ,res.data.data[res.data.data.length-1].id)
         if(localStorage.getItem('mdata') !==null){
           let oldmData = localStorage.getItem('mdata')
           let oldmData1 = JSON.parse(oldmData)
-          let arr =[...oldmData1 , ...res.data]
+          let arr =[...oldmData1 , ...res.data.data]
           let arr1 = arr.slice(-10)
           localStorage.setItem('mdata',JSON.stringify(arr1))
           setMessage(JSON.parse(localStorage.getItem('mdata')))
         }else{
-          localStorage.setItem('mdata',JSON.stringify(res.data))
+          localStorage.setItem('mdata',JSON.stringify(res.data.data))
           setMessage(JSON.parse(localStorage.getItem('mdata')))
         }
       }
     })
-    },[toggle])
+    },[userDataa?.id])
 
 // console.log(lastmessageid,'yyyyyy')
     const getMin=(time)=>{

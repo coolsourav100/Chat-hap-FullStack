@@ -1,4 +1,5 @@
-const Chat = require('../model/chat')
+const Chat = require('../model/chat');
+const Group = require('../model/group');
 const User = require('../model/user')
 const { Op } = require("sequelize");
 
@@ -8,9 +9,11 @@ exports.sendController = async(req,res,next)=>{
     
     try{
         let userData = await User.findAll({where:{id:userid}})
+        console.log(userData[0].name,'+++++++++++++++++++>')
         await Chat.create({
-            message:req.body.chat ,
-             userId:userid,name:userData[0].name}).then(result=>{
+            message:req.body.chat,
+             userId:userid,name:userData[0].name,
+            }).then(result=>{
             res.status(200).json('send')
         }).catch(err=>{
             throw new Error(err)
@@ -26,8 +29,18 @@ exports.allmassages = async(req,res , next)=>{
     let lastmessage =req.query.lastmessage
     try{
         if(userid){
-            let result =await Chat.findAll({where:{ id:{[Op.gt]:+lastmessage}}})
-            res.status(200).send(result)
+            // let result =await Chat.findAll({where:{ id:{[Op.gt]:+lastmessage}}})
+           let result = await Chat.findAll({
+                where: {
+                  [Op.and]: [
+                    { chatgroupId: null },
+                    { userId: userid },
+                    {id:{[Op.gt]:+lastmessage}}
+                  ]
+                }
+              })
+              console.log(result,'==============================>')
+            res.status(200).send({data:result,uid:userid})
         }else{
             res.status(400).json('Unauthorized Access')
         }
@@ -46,7 +59,7 @@ exports.sendGroupMessage = async(req,res,next)=>{
             message : req.body.chat,
             name:groupName,
             userId:userid,
-            groupId :groupid
+            chatgroupId :groupid
         })
         return res.status(200).json('message created')
     }catch(err){
@@ -55,17 +68,21 @@ exports.sendGroupMessage = async(req,res,next)=>{
 }
 
 exports.getGroupMessage = async(req,res,next)=>{
+    let userid = req.user.id 
     let groupid = req.params.id
     let lastmessage =req.params.lastsms
     try{
         let groupsms = await Chat.findAll({
-            where:{
-                groupId:groupid
-            },where:{
-                id:{[Op.gt]:+lastmessage}
-            }
+            
+            where: {
+                [Op.and]: [
+                  { chatgroupId: groupid },
+                  { userId: userid },
+                  
+                ]
+              }
         })
-        res.status(200).json(groupsms)
+        res.status(200).json({data:groupsms,gid:groupid})
     }catch(err){
         res.status(500).json(err)
     }

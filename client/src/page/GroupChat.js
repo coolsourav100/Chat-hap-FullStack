@@ -12,22 +12,25 @@ const GroupChat = ({groupData}) => {
 
     useEffect(()=>{
     axios.get(`${api}/chat/getgroupmessage/${groupData.id}/${localStorage.getItem('gmid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
-      if(res.data.length){
-        localStorage.setItem('gmid' ,res.data[res.data.length-1].id)
+      if(res.data.data.length){
+        console.log(groupData.id == res.data.gid)
+        if(res.data.gid != groupData.id){
+          localStorage.removeItem('gmdata')}
+        localStorage.setItem('gmid' ,res.data.data[res.data.data.length-1].id)
         if(localStorage.getItem('gmdata') !==null){
           let oldmData = localStorage.getItem('gmdata')
           let oldmData1 = JSON.parse(oldmData)
-          let arr =[...oldmData1 , ...res.data]
+          let arr =[...oldmData1 , ...res.data.data]
           let arr1 = arr.slice(-10)
           localStorage.setItem('gmdata',JSON.stringify(arr1))
           setMessage(JSON.parse(localStorage.getItem('gmdata')))
         }else{
-          localStorage.setItem('gmdata',JSON.stringify(res.data))
+          localStorage.setItem('gmdata',JSON.stringify(res.data.data))
           setMessage(JSON.parse(localStorage.getItem('gmdata')))
         }
       }
     })
-    },[toggle])
+    },[toggle,groupData.id])
 
 // console.log(lastmessageid,'yyyyyy')
     const getMin=(time)=>{
