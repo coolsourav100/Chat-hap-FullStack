@@ -13,21 +13,24 @@ const GroupChat = ({groupData}) => {
     useEffect(()=>{
     axios.get(`${api}/chat/getgroupmessage/${groupData.id}/${localStorage.getItem('gmid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
       if(res.data.data.length){
+        console.log(res,'===============>')
         console.log(groupData.id == res.data.gid)
         if(res.data.gid != groupData.id){
-          localStorage.removeItem('gmdata')}
+          localStorage.removeItem('gmdata')
+          localStorage.removeItem('gmid')
+        }
         localStorage.setItem('gmid' ,res.data.data[res.data.data.length-1].id)
-        if(localStorage.getItem('gmdata') !==null){
-          let oldmData = localStorage.getItem('gmdata')
-          let oldmData1 = JSON.parse(oldmData)
-          let arr =[...oldmData1 , ...res.data.data]
-          let arr1 = arr.slice(-10)
-          localStorage.setItem('gmdata',JSON.stringify(arr1))
-          setMessage(JSON.parse(localStorage.getItem('gmdata')))
-        }else{
+        // if(localStorage.getItem('gmdata') !==null){
+          // let oldmData = localStorage.getItem('gmdata')
+          // let oldmData1 = JSON.parse(oldmData)
+          // let arr =[...oldmData1 , ...res.data.data]
+          // let arr1 = arr.slice(-10)
+          // localStorage.setItem('gmdata',JSON.stringify(arr1))
+          // setMessage(JSON.parse(localStorage.getItem('gmdata')))
+        // }else{
           localStorage.setItem('gmdata',JSON.stringify(res.data.data))
           setMessage(JSON.parse(localStorage.getItem('gmdata')))
-        }
+        // }
       }
     })
     },[toggle,groupData.id])
@@ -79,7 +82,7 @@ setToggle(setTimeout(()=>{
                 
                 <span className="text-muted small mb-0 p-2"><i class="bi bi-clock"></i>  {getMin(item.updatedAt)}  Mins</span></p>
               </div>
-              <span className="text-info p-1">{item.name}</span>
+              <span className="text-info p-1">{item.senderId}</span>
             </div>
           </li>)})}
          

@@ -41,7 +41,7 @@ exports.registerController = async(req,res,next)=>{
             bcrypt.compare(password , comparePassword, async(err,hashResult)=>{
                 if(!err){
                 if(hashResult==true){
-                    res.status(200).json({message:'User Logged in successfully !!' , token:jwttokon ,username:result[0].name})
+                    res.status(200).json({message:'User Logged in successfully !!' , token:jwttokon ,username:result[0].name , userid:result[0].id})
                 }else{
                     res.status(401).json('User not Authorized')
                 }}else{

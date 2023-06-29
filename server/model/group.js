@@ -13,6 +13,10 @@ const Group = sequelize.define('chatgroup',{
         type:Sequilize.STRING,
         allowNull:false
     },
+    admin:{
+        type:Sequilize.STRING,
+        allowNull:false
+    }
     
 })
 

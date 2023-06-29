@@ -16,8 +16,8 @@ app.use(cors({origin:'http://localhost:3000'}))
 
 User.hasMany(Chat);
 Group.hasMany(Chat)
-Chat.belongsTo(Group)
-Chat.belongsTo(User)
+Chat.belongsTo(Group ,{constraints: true, onDelete: 'CASCADE'})
+Chat.belongsTo(User  ,{constraints: true, onDelete: 'CASCADE'})
 User.belongsToMany(Group,{ through: GroupUser})
 Group.belongsToMany(User,{through: GroupUser})
 
@@ -26,7 +26,7 @@ app.use('/chat',chatRouter)
 app.use('/group' , groupRouter)
 
 
-sequelize.sync()
+sequelize.sync({force:true})
 const port = 4000
 app.listen(port,()=>{
     console.log('server running on' , port)

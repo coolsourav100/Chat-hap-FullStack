@@ -29,7 +29,9 @@ console.log(userDetails,'userData+++++++++++++++')
     <div className='m-2 mh-50'>
         <div className='d-flex justify-content-between'>
             <img className='img d-flex jusity-content-row-reverse' src={logo}/>
-            <div><Logout/></div>
+            <div><Logout/>
+            <h3>Welcome  {localStorage.getItem('username')}</h3>
+            </div>
             </div>
         <section className='container mw-100 border  rounded' style={{backgroundColor: "#eee"}}>
   <div className="container d-flex">

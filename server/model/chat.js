@@ -15,6 +15,10 @@ const Chat = sequelize.define('chat',{
     name:{
         type:Sequilize.STRING,
         allowNull:false
+    },
+    senderId:{
+        type:Sequilize.STRING,
+        allowNull:false
     }
 })
 

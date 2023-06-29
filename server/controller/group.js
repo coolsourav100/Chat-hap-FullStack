@@ -8,7 +8,7 @@ exports.createGroup = async(req,res,next)=>{
     let groupmember = req.body.groupmember
     
     try{
-        let newgroup = await Group.create({name:name})
+        let newgroup = await Group.create({name:name , admin:userid})
         console.log(newgroup.id,'mewgrouppppp')
             if(!groupmember.includes(userid.toString())){
                 groupmember.push(userid.toString())
@@ -42,5 +42,21 @@ exports.getGroupData = async(req,res,next)=>{
 }catch(err){
 res.status(500).json(err)
 }
+}
+
+exports.deleteGroup = async(req,res,next)=>{
+    let groupid = req.params.id
+    let userid = req.user.id
+    try{
+        let result = await Group.findOne({id:groupid})
+        if(result.admin == userid){
+           await Group.destroy({where:{id:groupid}})
+           res.status(200).json('Group Has Been Deleted !!!')
+        }else{
+            res.status(400).json('Unauthorized operation!!!!!')
+        }
+    }catch(err){
+        res.status(500).json(err)
+    }
 }
 

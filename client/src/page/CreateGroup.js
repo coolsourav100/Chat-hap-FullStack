@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import group from '../Assets/group.jpg'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-
+import Select from 'react-select';
 import api from '../helper/api'
 
 const CreateGroup = () => {
     const [name , setName] = useState('')
     const [allmember , setAllmember] = useState([])
     const [ member , setMember] = useState([])
+    const [selectedOption, setSelectedOption] = useState(null);
     const navigate = useNavigate()
     
     useEffect(()=>{
@@ -27,12 +28,22 @@ const CreateGroup = () => {
 
     const submitHandler=(e)=>{
         e.preventDefault()
-        axios.post(`${api}/group/create`,{name:name , groupmember:member},{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res=>{
+        let marr =[]
+     selectedOption?.forEach(i=>marr.push(i.value))
+        axios.post(`${api}/group/create`,{name:name , groupmember:marr},{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res=>{
             console.log(res,'group')
         })).catch(err=>console.log(err))
         navigate('/dashboard')
     }
-    console.log(member)
+
+    let options = []
+    allmember?.forEach(item=>{
+      options.push({ value: item.id, label: item.name })
+    })
+
+    
+    console.log(member , selectedOption)
+    
   return (
     <div>
          <div>
@@ -57,15 +68,24 @@ const CreateGroup = () => {
           <div className="form-outline mb-4">
             
            
-              {allmember.map((item)=>{
+              {/* {allmember.map((item)=>{
+                
                 return (
                   <>
                   <label>{item.name}</label>
                   <input type='checkbox'  value={item.id} onClick={memberHandler}/>
                   </>
                 )
-              })}
-              
+              })} */}
+              <Select
+              isMulti
+              defaultValue={selectedOption}
+              name="Members"
+              options={options}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={setSelectedOption}
+              />
               
             <label className="form-label" for="form1Example13">Add Member</label>
           </div>

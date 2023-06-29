@@ -12,23 +12,25 @@ const Chat = ({userDataa}) => {
     useEffect(()=>{
     axios.get(`${api}/chat/allmassages/${localStorage.getItem('mid') || 0}/${userDataa?.id || 1}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
       if(res.data.data.length){
-        console.log(userDataa,res.data,'===============')
+        console.log(res,'===============cgat')
         if(res.data.uid != userDataa?.id){
-          localStorage.removeItem('mdata')}
+          localStorage.removeItem('mdata')
+          localStorage.removeItem('mid')
+        }
         localStorage.setItem('mid' ,res.data.data[res.data.data.length-1].id)
-        if(localStorage.getItem('mdata') !==null){
-          let oldmData = localStorage.getItem('mdata')
-          let oldmData1 = JSON.parse(oldmData)
-          let arr =[...oldmData1 , ...res.data.data]
-          let arr1 = arr.slice(-10)
-          localStorage.setItem('mdata',JSON.stringify(arr1))
-          setMessage(JSON.parse(localStorage.getItem('mdata')))
-        }else{
+        // if(localStorage.getItem('mdata') !==null){
+          // let oldmData = localStorage.getItem('mdata')
+          // let oldmData1 = JSON.parse(oldmData)
+          // let arr =[...oldmData1 , ...res.data.data]
+          // let arr1 = arr.slice(-10)
+          // localStorage.setItem('mdata',JSON.stringify(arr1))
+          // setMessage(JSON.parse(localStorage.getItem('mdata')))
+        // }else{
           localStorage.setItem('mdata',JSON.stringify(res.data.data))
           setMessage(JSON.parse(localStorage.getItem('mdata')))
-        }
-      }
-    })
+        // }
+      // }
+    }})
     },[userDataa?.id,toggle])
 
 // console.log(lastmessageid,'yyyyyy')

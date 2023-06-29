@@ -47,6 +47,7 @@ setUserDetails({...userDetails,[e.target.name]:e.target.value})
           })
           localStorage.setItem('token',responec.data.token)
           localStorage.setItem('username',responec.data.username)
+          localStorage.setItem('userid',responec.data.userid)
           navigate('/dashboard')
         }
 
