@@ -11,6 +11,7 @@ const Group = require('./model/group');
 const GroupUser = require('./model/groupuser')
 const app = express()
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(cors({origin:'http://localhost:3000'}))
 
@@ -26,7 +27,7 @@ app.use('/chat',chatRouter)
 app.use('/group' , groupRouter)
 
 
-sequelize.sync({force:true})
+sequelize.sync()
 const port = 4000
 app.listen(port,()=>{
     console.log('server running on' , port)

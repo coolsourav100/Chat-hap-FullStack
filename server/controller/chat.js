@@ -2,6 +2,10 @@ const Chat = require('../model/chat');
 const Group = require('../model/group');
 const User = require('../model/user')
 const { Op } = require("sequelize");
+const multer = require('multer');
+const s3services = require('../services/s3services');
+
+const upload = multer();
 
 exports.sendController = async(req,res,next)=>{
     let sender = req.params.sender
@@ -99,3 +103,37 @@ exports.getGroupMessage = async(req,res,next)=>{
         res.status(500).json(err)
     }
 }
+
+exports.s3bucketHandler = async (req, res, next) => {
+    let groupid = req.params.id;
+    let groupName = req.params.name;
+    let userid = req.user.id;
+    let file = req.file;
+    console.log(file, "======================>");
+  
+    if (userid) {
+      try {
+        const filename = `pic/${new Date()}.jpg`;
+        const fileurl = await s3services.uploadToS3(file.buffer, filename);
+        console.log(fileurl, 'oioioioiiiioioiioi');
+        
+        let userData = await User.findAll({ where: { id: userid } });
+        
+        await Chat.create({
+          message: fileurl,
+          name: groupName,
+          userId: userid,
+          chatgroupId: groupid,
+          senderId: userData[0].name
+        });
+        
+        res.status(200).json('File Uploaded');
+        
+      } catch (err) {
+        res.status(400).json('failed to upload');
+      }
+      
+    } else {
+      res.status(400).json('Unauthorized Access');
+    }
+  };

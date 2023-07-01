@@ -5,6 +5,7 @@ import api from '../helper/api';
 
 const GroupChat = ({groupData}) => {
     const [chat , setChat] = useState('');
+    const [file1 , setFile1] = useState()
     const [toggle , setToggle] = useState(false)
     const [ message , setMessage] = useState(JSON.parse(localStorage.getItem('mdata')))
     
@@ -50,6 +51,9 @@ const GroupChat = ({groupData}) => {
     }
     
     const sendChatHandler=async(e)=>{
+      if(chat.length<1){
+        return window.alert('Please write your message')
+      }
         try{
 let responce = await axios.post(`${api}/chat/sendgroupmessage/${groupData.id}/${groupData.name}`,{chat} ,{ headers: {"Authorization" : localStorage.getItem('token')} })
 setToggle(setTimeout(()=>{
@@ -62,6 +66,35 @@ setToggle(setTimeout(()=>{
         setChat('')
     }
     console.log('GroupChat')
+    console.log(file1)
+
+    const sendMediaHandler = async (e) => {
+      e.preventDefault();
+      if(file1.length<1){
+        return window.alert('Please upload your picture')
+      }
+      
+      const bodyFormData = new FormData();
+      bodyFormData.append('profileImg', file1,);
+      
+      try {
+        const response = await axios.post(
+          `${api}/chat/filesendgroupmessage/${groupData.id}/${groupData.name}`,
+          bodyFormData,
+          {
+            headers: {
+              "Authorization": localStorage.getItem('token'),
+              "Content-Type": "multipart/form-data"
+            }
+          }
+        );
+        
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+      setFile1('')
+    }
   return (
     <div >
         <h3 className="font-weight-bold mb-3 text-center text-secondary text-lg-start">Group Name : {groupData?.name}</h3>
@@ -69,21 +102,28 @@ setToggle(setTimeout(()=>{
       <ul className=" list-unstyled">
       {message?.map((item,index)=>{
         let config = genConfig(item.id)
-          return (<li className="d-flex justify-content-between mb-4" key={index+1}>
+        console.log(item.message.includes('.jpg'))
+          return (
+            <li className="d-flex justify-content-between mb-4" key={index+1}>
           <div className='d-flex flex-column'>
           <Avatar style={{ width: '4rem', height: '4rem' }} {...config} /><span className='text-primary p-2'>{item.name}</span>
           </div>
-
+{!item.message.includes('.jpg') &&
             <div className="card">
               
-                 <div className="card-body d-flex justify-content-around">
-                <p className="display-8 mb-0 text-bold text-dark p-2">
+                 <div className="overflow card-body d-flex justify-content-around">
+                 
+                <p className="display-8 mb-0 text-bold text-dark">
                 {item.message}
                 
                 <span className="text-muted small mb-0 p-2"><i class="bi bi-clock"></i>  {getMin(item.updatedAt)}  Mins</span></p>
               </div>
               <span className="text-info p-1">{item.senderId}</span>
             </div>
+}
+{item.message.includes('.jpg') &&
+            <img src={item.message} alt={item.message} style={{width:'20rem', height:'20rem'}}/>
+}
           </li>)})}
          
           
@@ -93,9 +133,12 @@ setToggle(setTimeout(()=>{
       <li className="opacity-100 bg-transparent mb-3">
       <div className="form-group purple-border">
         <textarea className="bg-transparent form form-control " id="textAreaExample2" rows="4" placeholder='Type Your Message....' onChange={changeHandler} value={chat}></textarea>
+        <input type='file' className='btn bg-transparent'onChange={(e)=>setFile1(e.target.files[0])}/>
       </div>
     </li>
+    <button type="button" className="btn btn-info btn-rounded float-end mx-4 px-4" onClick={sendMediaHandler}>Send Media</button>
     <button type="button" className="btn btn-info btn-rounded float-end mx-4 px-4" onClick={sendChatHandler}>Send</button>
+    
     </div>
     
   )
