@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import Avatar, { genConfig } from 'react-nice-avatar'
+import React, { useEffect, useRef, useState } from 'react';
+import Avatar, { genConfig } from 'react-nice-avatar';
+import {io} from 'socket.io-client'
 import axios from 'axios';
 import api from '../helper/api';
+
+const ENDPOINT = 'http://localhost:4000';
+let socket = io(ENDPOINT)
 
 const GroupChat = ({groupData}) => {
     const [chat , setChat] = useState('');
@@ -12,29 +16,48 @@ const GroupChat = ({groupData}) => {
     
 
     useEffect(()=>{
-    axios.get(`${api}/chat/getgroupmessage/${groupData.id}/${localStorage.getItem('gmid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
-      if(res.data.data.length){
-        console.log(res,'===============>')
-        console.log(groupData.id == res.data.gid)
-        if(res.data.gid != groupData.id){
-          localStorage.removeItem('gmdata')
-          localStorage.removeItem('gmid')
-        }
-        localStorage.setItem('gmid' ,res.data.data[res.data.data.length-1].id)
-        // if(localStorage.getItem('gmdata') !==null){
-          // let oldmData = localStorage.getItem('gmdata')
-          // let oldmData1 = JSON.parse(oldmData)
-          // let arr =[...oldmData1 , ...res.data.data]
-          // let arr1 = arr.slice(-10)
-          // localStorage.setItem('gmdata',JSON.stringify(arr1))
-          // setMessage(JSON.parse(localStorage.getItem('gmdata')))
-        // }else{
-          localStorage.setItem('gmdata',JSON.stringify(res.data.data))
-          setMessage(JSON.parse(localStorage.getItem('gmdata')))
-        // }
-      }
-    })
+      (async()=>{ 
+      await fetchmessage(groupData)
+    })()
+    
     },[toggle,groupData.id])
+
+    useEffect(()=>{
+      socket.emit('join-room', groupData.id)
+      socket.on('receive-message', async (data) => {
+        if(groupData.id == data){
+          await fetchmessage(groupData)
+          setToggle(!toggle)
+        }
+        
+      });
+  
+    },[])
+
+    async function fetchmessage(groupData){
+      await axios.get(`${api}/chat/getgroupmessage/${groupData.id}/${localStorage.getItem('gmid') || 0}` ,{ headers: {"Authorization" : localStorage.getItem('token')}}).then((res)=>{
+        if(res.data.data.length){
+          // console.log(res,'===============>')
+          // console.log(groupData.id == res.data.gid)
+          if(res.data.gid != groupData.id){
+            localStorage.removeItem('gmdata')
+            localStorage.removeItem('gmid')
+          }
+          localStorage.setItem('gmid' ,res.data.data[res.data.data.length-1].id)
+          // if(localStorage.getItem('gmdata') !==null){
+            // let oldmData = localStorage.getItem('gmdata')
+            // let oldmData1 = JSON.parse(oldmData)
+            // let arr =[...oldmData1 , ...res.data.data]
+            // let arr1 = arr.slice(-10)
+            // localStorage.setItem('gmdata',JSON.stringify(arr1))
+            // setMessage(JSON.parse(localStorage.getItem('gmdata')))
+          // }else{
+            localStorage.setItem('gmdata',JSON.stringify(res.data.data))
+            setMessage(JSON.parse(localStorage.getItem('gmdata')))
+          // }
+        }
+      })
+    }
 
 // console.log(lastmessageid,'yyyyyy')
     const getMin=(time)=>{
@@ -56,6 +79,8 @@ const GroupChat = ({groupData}) => {
       }
         try{
 let responce = await axios.post(`${api}/chat/sendgroupmessage/${groupData.id}/${groupData.name}`,{chat} ,{ headers: {"Authorization" : localStorage.getItem('token')} })
+
+socket.emit('send-message',groupData.id)
 setToggle(setTimeout(()=>{
   return !toggle
 },1000))
@@ -65,8 +90,8 @@ setToggle(setTimeout(()=>{
         }
         setChat('')
     }
-    console.log('GroupChat')
-    console.log(file1)
+    // console.log('GroupChat')
+    // console.log(file1)
 
     const sendMediaHandler = async (e) => {
       e.preventDefault();
@@ -89,7 +114,9 @@ setToggle(setTimeout(()=>{
           }
         );
         
-        console.log(response.data);
+        if(response.data){
+          setTimeout(setToggle(!toggle),1000)
+        };
       } catch (error) {
         console.log(error);
       }
@@ -99,10 +126,10 @@ setToggle(setTimeout(()=>{
     <div >
         <h3 className="font-weight-bold mb-3 text-center text-secondary text-lg-start">Group Name : {groupData?.name}</h3>
       <div className="overflow-auto col-md-6 col-lg-7 col-xl-8 p-2 m-2" style={{height:'500px',width:'800px'}}>
-      <ul className=" list-unstyled">
+      <ul className=" list-unstyled" >
       {message?.map((item,index)=>{
         let config = genConfig(item.id)
-        console.log(item.message.includes('.jpg'))
+        // console.log(item.message.includes('.jpg'))
           return (
             <li className="d-flex justify-content-between mb-4" key={index+1}>
           <div className='d-flex flex-column'>

@@ -17,7 +17,7 @@ let userid  = localStorage.getItem('userid')
         setAllgroup(arr)
       }
     })).catch(err=>console.log(err))
-  },[])
+  },[toggle])
 
   let config1 =genConfig(`joh**%`)
 

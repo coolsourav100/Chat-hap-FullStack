@@ -8,12 +8,29 @@ const cors = require('cors');
 const User = require('./model/user');
 const Chat = require('./model/chat');
 const Group = require('./model/group');
-const GroupUser = require('./model/groupuser')
+const GroupUser = require('./model/groupuser');
+const { group } = require('console');
 const app = express()
+const server = require('http').createServer(app)
+const io = require('socket.io')(server,{
+cors:{
+    origin:'*'}
 
+});
+
+io.on('connection', socket => {
+    socket.on('join-room', room => {
+      socket.join(room);
+    });
+  
+    socket.on('send-message', (room) => {
+      socket.in(room).emit('receive-message', room);
+    });
+  });
+app.use(cors('*'))
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
-app.use(cors({origin:'http://localhost:3000'}))
+// app.use(cors({origin:'http://localhost:3000'}))
 
 User.hasMany(Chat);
 Group.hasMany(Chat)
@@ -29,6 +46,6 @@ app.use('/group' , groupRouter)
 
 sequelize.sync()
 const port = 4000
-app.listen(port,()=>{
+server.listen(port,()=>{
     console.log('server running on' , port)
 })
